@@ -1,10 +1,10 @@
 import React from 'react';
 import useStore from '../../store/useStore';
 import { motion } from 'framer-motion';
-import { User, Cpu } from 'lucide-react';
+import { User, Cpu, Volume2, VolumeX } from 'lucide-react';
 
 export default function EnvironmentSelection() {
-  const { setStep } = useStore();
+  const { setStep, isMuted, toggleMute } = useStore();
 
   const environments = [
     { id: 'ed', label: 'ED', x: -150, y: 50 },
@@ -30,6 +30,18 @@ export default function EnvironmentSelection() {
             <User className="w-5 h-5 text-primary mr-3" />
             <span className="text-sm font-bold text-white tracking-widest uppercase">James</span>
           </div>
+
+          <button 
+            onClick={toggleMute}
+            className="flex items-center justify-center w-10 h-10 bg-black/40 backdrop-blur-md rounded-xl border border-white/10 text-slate-300 hover:text-white hover:bg-black/60 transition-all"
+            title={isMuted ? "Unmute Ambient Music" : "Mute Ambient Music"}
+          >
+            {isMuted ? (
+              <VolumeX className="w-5 h-5" />
+            ) : (
+              <Volume2 className="w-5 h-5 animate-pulse text-primary" />
+            )}
+          </button>
         </div>
 
         <div className="flex items-center bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">

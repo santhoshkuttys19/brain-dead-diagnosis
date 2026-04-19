@@ -32,10 +32,15 @@ const useStore = create((set) => ({
   diagnosis: null, // 'yes' | 'no'
   
   // Step 6: Communication
-  communication: null, // 'explain' | 'avoid' | 'empathy'
+  communication: null,
+  isMuted: false,
+
+ // 'explain' | 'avoid' | 'empathy'
   
   // Actions
+  toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
   setStep: (step) => set({ currentStep: step }),
+
   
   nextStep: () => set((state) => ({ currentStep: Math.min(state.currentStep + 1, 7) })),
   prevStep: () => set((state) => ({ currentStep: Math.max(state.currentStep - 1, 1) })),

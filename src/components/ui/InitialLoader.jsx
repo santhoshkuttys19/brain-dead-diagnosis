@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useStore from '../../store/useStore';
 
 const loadingSteps = [
   "INITIALIZING NEURAL INTERFACE...",
@@ -11,10 +12,13 @@ const loadingSteps = [
 ];
 
 export default function InitialLoader({ onComplete }) {
+  const [isStarted, setIsStarted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if (!isStarted) return;
+
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) => {
         if (prev < loadingSteps.length - 1) return prev + 1;
@@ -35,7 +39,7 @@ export default function InitialLoader({ onComplete }) {
       clearInterval(stepInterval);
       clearInterval(progressInterval);
     };
-  }, [onComplete]);
+  }, [onComplete, isStarted]);
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0f172a] flex flex-col items-center justify-center overflow-hidden font-mono">
@@ -79,35 +83,61 @@ export default function InitialLoader({ onComplete }) {
           />
         </div>
 
-        {/* Loading Text */}
-        <div className="w-80 space-y-4">
-          <div className="flex justify-between text-xs text-primary/70 mb-1 tracking-widest">
-            <span>SYSTEM_BOOT_SEQUENCE</span>
-            <span>{Math.round(progress)}%</span>
-          </div>
-          
-          {/* Progress Bar */}
-          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-            <motion.div 
-              className="h-full bg-primary shadow-[0_0_10px_rgba(59,130,246,1)]"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          {/* Dynamic Status Text */}
-          <div className="h-8 flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={currentStep}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="text-primary font-bold tracking-[0.2em] text-sm uppercase"
+        {/* System Interaction / Progress */}
+        <div className="w-80 h-32 flex flex-col items-center justify-center">
+          <AnimatePresence mode="wait">
+            {!isStarted ? (
+              <motion.button
+                key="start-btn"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(59,130,246,0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setIsStarted(true);
+                }}
+                className="px-8 py-4 bg-primary/20 border border-primary/50 text-primary font-bold tracking-[0.3em] rounded-xl hover:bg-primary/30 transition-all uppercase"
               >
-                {loadingSteps[currentStep]}
-              </motion.p>
-            </AnimatePresence>
-          </div>
+                Initialize System
+              </motion.button>
+            ) : (
+              <motion.div
+                key="loading-progress"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full space-y-4"
+              >
+                <div className="flex justify-between text-xs text-primary/70 mb-1 tracking-widest">
+                  <span>SYSTEM_BOOT_SEQUENCE</span>
+                  <span>{Math.round(progress)}%</span>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                  <motion.div 
+                    className="h-full bg-primary shadow-[0_0_10px_rgba(59,130,246,1)]"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+
+                {/* Dynamic Status Text */}
+                <div className="h-8 flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={currentStep}
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      className="text-primary font-bold tracking-[0.2em] text-sm uppercase text-center"
+                    >
+                      {loadingSteps[currentStep]}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Binary/Data Stream Decoration */}

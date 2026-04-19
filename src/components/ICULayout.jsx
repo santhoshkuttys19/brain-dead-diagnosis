@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useStore from '../store/useStore';
-import { Clock, Activity, Droplet, Home, User } from 'lucide-react';
+import { Clock, Activity, Droplet, Home, User, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Step Components
@@ -13,7 +13,7 @@ import CommunicationPanel from './steps/CommunicationPanel';
 import FeedbackScreen from './steps/FeedbackScreen';
 
 export default function ICULayout() {
-  const { currentStep, resetStore } = useStore();
+  const { currentStep, resetStore, isMuted, toggleMute } = useStore();
   const [timeStr, setTimeStr] = useState('00:00:00');
 
   // Simple timer simulator
@@ -62,6 +62,18 @@ export default function ICULayout() {
             title="Return to Home"
           >
             <Home className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          </button>
++
+          <button 
+            onClick={toggleMute}
+            className="p-2 bg-slate-800 hover:bg-primary/20 text-slate-400 hover:text-primary rounded-xl border border-slate-700 transition-all group"
+            title={isMuted ? "Unmute Ambient Music" : "Mute Ambient Music"}
+          >
+            {isMuted ? (
+              <VolumeX className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            ) : (
+              <Volume2 className="w-5 h-5 group-hover:scale-110 transition-transform animate-pulse" />
+            )}
           </button>
 
           <div className="h-8 w-[1px] bg-slate-700 hidden md:block" />
